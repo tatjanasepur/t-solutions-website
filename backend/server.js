@@ -33,7 +33,7 @@ transporter.verify((err, ok) => {
   }
 });
 
-// health check
+
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
 app.post("/api/contact", async (req, res) => {
