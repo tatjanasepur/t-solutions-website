@@ -1,4 +1,4 @@
-// backend/server.js
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -8,24 +8,23 @@ import rateLimit from "express-rate-limit";
 dotenv.config();
 const app = express();
 
-// dozvoli lokalni FE (Live Server, 127.0.0.1:5500, localhost:5500)
-// i uopšteno preflight za POST
+
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-// throttle na /api/contact
+
 app.use("/api/contact", rateLimit({ windowMs: 60_000, max: 5 }));
 
-// --- Gmail transporter (koristi App Password) ---
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.SMTP_USER, // npr. t.solutions.dev@gmail.com
-    pass: process.env.SMTP_PASS, // 16-znakovna app lozinka
+    user: process.env.SMTP_USER, 
+    pass: process.env.SMTP_PASS, 
   },
 });
 
-// optional: verifikacija konekcije pri startu (korisno za debug)
+
 transporter.verify((err, ok) => {
   if (err) {
     console.error("SMTP verify error:", err);
@@ -47,9 +46,9 @@ app.post("/api/contact", async (req, res) => {
 
   try {
     const info = await transporter.sendMail({
-      from: process.env.SMTP_USER, // mora da bude isti nalog koji se autentifikuje (Gmail)
-      to: process.env.TO_EMAIL || process.env.SMTP_USER, // gde želiš da stigne
-      replyTo: email, // da “Reply” ide pošiljaocu iz forme
+      from: process.env.SMTP_USER, 
+      to: process.env.TO_EMAIL || process.env.SMTP_USER, 
+      replyTo: email, 
       subject: `Novi upit sa sajta — ${name}`,
       text: `Ime: ${name}\nEmail: ${email}\n\n${message}`,
       html: `<p><b>Ime:</b> ${name}<br><b>Email:</b> ${email}</p><p>${String(message).replace(/\n/g, "<br>")}</p>`,
